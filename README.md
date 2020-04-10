@@ -1,10 +1,8 @@
 # image_filter_overlay_app
 
-A new Flutter project.
+An image colour filtering application built in Dart with Flutter.
 
 ## Getting Started
-
-This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
