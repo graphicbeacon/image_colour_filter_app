@@ -1,68 +1,95 @@
-// Copyright (c) 2019, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+void main() {
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Scaffold(
+      body: ImageApp(),
+    ),
+  ));
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
+class ImageApp extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ImageAppState createState() => _ImageAppState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _ImageAppState extends State<ImageApp> {
+  final double handleWidth = 30;
+  final imgUrl = 'https://picsum.photos/id/10';
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  double leftStart;
+  double containerWidth = 100;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
+    final screenW = MediaQuery.of(context).size.width;
+    final screenH = MediaQuery.of(context).size.height;
+
+    final networkImageUrl = '$imgUrl/${screenW.toInt()}/${screenH.toInt()}';
+
+    return Stack(
+      children: <Widget>[
+        Container(
+            width: screenW,
+            height: screenH,
+            color: Colors.yellow,
+            child: Image.network(
+              networkImageUrl,
+              width: screenW,
+              height: screenH,
+            )),
+        Container(
+            width: containerWidth,
+            height: screenH,
+            color: Colors.purple,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  left: 0,
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      Colors.green,
+                      BlendMode.overlay,
+                    ),
+                    child: Image.network(
+                      networkImageUrl,
+                      width: screenW,
+                      height: screenH,
+                      fit: BoxFit.none,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onHorizontalDragStart: (details) {
+                      setState(() {
+                        leftStart = details.localPosition.dx;
+                      });
+                    },
+                    onHorizontalDragUpdate: (details) {
+                      var offsetWidth = details.globalPosition.dx + leftStart;
+
+                      setState(() {
+                        if (offsetWidth < handleWidth) {
+                          containerWidth = handleWidth;
+                        } else {
+                          containerWidth = offsetWidth;
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: handleWidth,
+                      height: screenH,
+                      color: Colors.grey,
+                      child: Icon(Icons.drag_handle),
+                    ),
+                  ),
+                )
+              ],
+            )),
+      ],
     );
   }
 }
