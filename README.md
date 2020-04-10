@@ -2,6 +2,8 @@
 
 An image colour filtering application built in Dart with Flutter.
 
+[Watch the video tutorial](https://youtu.be/faMUsfcL2i4)
+
 ## Getting Started
 
 A few resources to get you started if this is your first Flutter project:
